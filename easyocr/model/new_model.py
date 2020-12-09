@@ -16,16 +16,16 @@ limitations under the License.
 
 import torch.nn as nn
 
-from modules.transformation import TPS_SpatialTransformerNetwork
-from modules.feature_extraction import VGG_FeatureExtractor, RCNN_FeatureExtractor, ResNet_FeatureExtractor
-from modules.sequence_modeling import BidirectionalLSTM
-from modules.prediction import Attention
+from .new_model_modules.transformation import TPS_SpatialTransformerNetwork
+from .new_model_modules.feature_extraction import VGG_FeatureExtractor, RCNN_FeatureExtractor, ResNet_FeatureExtractor
+from .new_model_modules.sequence_modeling import BidirectionalLSTM
+from .new_model_modules.prediction import Attention
 
 
 class Model(nn.Module):
 
-    def __init__(self, input_channel, output_channel, hidden_size, num_class, trans, feat, seq, pred,\
-         num_fiducial, imgH, imgW, batch_max_length):
+    def __init__(self, input_channel, output_channel, hidden_size, num_class, trans='TPS', feat='ResNet', seq='BiLSTM', pred='Attn',\
+         num_fiducial=20, imgH=32, imgW=100, batch_max_length=25):
         super(Model, self).__init__()
         self.opt = opt
         self.stages = {'Trans': trans, 'Feat': feat,

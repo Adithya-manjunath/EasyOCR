@@ -94,7 +94,8 @@ class Reader(object):
 
         # recognition model
         separator_list = {}
-        if recog_network != 'standard':
+        print((recog_network == 'easyocr.model.new_model'))
+        if recog_network != 'standard' and recog_network != 'easyocr.model.new_model': 
             with open(os.path.join(self.user_network_directory, recog_network+ '.yaml')) as file:
                 recog_config = yaml.load(file, Loader=yaml.FullLoader)
             imgH = recog_config['imgH']
