@@ -106,7 +106,7 @@ class Reader(object):
             model_file = recog_network+ '.pth'
             model_path = os.path.join(self.model_storage_directory, model_file)
 
-        #temporary change to setup new_model, later include yaml config for the same 
+        #temp_change
         elif recog_network == 'easyocr.model.new_model':
             imgH = 32
             available_lang = ['en']
@@ -255,7 +255,9 @@ class Reader(object):
                     'output_channel': 256,
                     'hidden_size': 256
                     }
-            elif recog_network=='easyocr.model.new_model':
+
+            #temp_change        
+            elif recog_network=='easyocr.model.new_model': 
                 network_params={
                     'input_channel':1,
                     'output_channel':512,
