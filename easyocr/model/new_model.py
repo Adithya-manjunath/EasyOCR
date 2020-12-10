@@ -27,7 +27,9 @@ class Model(nn.Module):
     def __init__(self, input_channel, output_channel, hidden_size, num_class, trans='TPS', feat='ResNet', seq='BiLSTM', pred='Attn',\
          num_fiducial=20, imgH=32, imgW=100, batch_max_length=25):
         super(Model, self).__init__()
-        self.opt = opt
+        #self.opt = opt
+
+        self.batch_max_length=batch_max_length
         self.stages = {'Trans': trans, 'Feat': feat,
                        'Seq': seq, 'Pred': pred}
 
@@ -51,7 +53,7 @@ class Model(nn.Module):
         self.AdaptiveAvgPool = nn.AdaptiveAvgPool2d((None, 1))  # Transform final (imgH/16-1) -> 1
 
         """ Sequence modeling"""
-        if SequenceModeling == 'BiLSTM':
+        if seq == 'BiLSTM':
             self.SequenceModeling = nn.Sequential(
                 BidirectionalLSTM(self.FeatureExtraction_output, hidden_size, hidden_size),
                 BidirectionalLSTM(hidden_size, hidden_size, hidden_size))
@@ -61,9 +63,9 @@ class Model(nn.Module):
             self.SequenceModeling_output = self.FeatureExtraction_output
 
         """ Prediction """
-        if Prediction == 'CTC':
+        if pred == 'CTC':
             self.Prediction = nn.Linear(self.SequenceModeling_output, num_class)
-        elif Prediction == 'Attn':
+        elif pred == 'Attn':
             self.Prediction = Attention(self.SequenceModeling_output, hidden_size, num_class)
         else:
             raise Exception('Prediction is neither CTC or Attn')

@@ -14,6 +14,7 @@ import sys
 from PIL import Image
 from logging import getLogger
 import yaml
+import string
 
 if sys.version_info[0] == 2:
     from io import open
@@ -94,17 +95,27 @@ class Reader(object):
 
         # recognition model
         separator_list = {}
-        print((recog_network == 'easyocr.model.new_model'))
-        if recog_network != 'standard' and recog_network != 'easyocr.model.new_model': 
+        if recog_network != 'standard' and recog_network != 'easyocr.model.new_model':
             with open(os.path.join(self.user_network_directory, recog_network+ '.yaml')) as file:
                 recog_config = yaml.load(file, Loader=yaml.FullLoader)
             imgH = recog_config['imgH']
             available_lang = recog_config['lang_list']
             self.setModelLanguage(recog_network, lang_list, available_lang, available_lang)
-            char_file = os.path.join(self.user_network_directory, recog_network+ '.txt')
+            #char_file = os.path.join(self.user_network_directory, recog_network+ '.txt')
             self.character = recog_config['character_list']
             model_file = recog_network+ '.pth'
             model_path = os.path.join(self.model_storage_directory, model_file)
+
+        #temporary change to setup new_model, later include yaml config for the same 
+        elif recog_network == 'easyocr.model.new_model':
+            imgH = 32
+            available_lang = ['en']
+            self.setModelLanguage(recog_network, lang_list, available_lang, available_lang)
+            char_file = os.path.join(self.user_network_directory, recog_network+ '.txt')
+            self.character = number+ symbol + characters['all_char']
+            model_file = 'latin' + '.pth'
+            model_path = os.path.join(self.model_storage_directory, model_file)
+
         else:
             # check available languages
             unknown_lang = set(lang_list) - set(all_lang_list)
@@ -244,6 +255,14 @@ class Reader(object):
                     'output_channel': 256,
                     'hidden_size': 256
                     }
+            elif recog_network=='easyocr.model.new_model':
+                network_params={
+                    'input_channel':1,
+                    'output_channel':512,
+                    'hidden_size':256
+                }
+                self.character=string.printable[:-64]
+
             else:
                 network_params = recog_config['network_params']
             self.recognizer, self.converter = get_recognizer(recog_network, network_params,\
